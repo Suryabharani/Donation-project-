@@ -1,0 +1,38 @@
+// App.js
+import { useState, useEffect } from 'react';
+
+function App() {
+  const [data, setData] = useState([]);
+  const [title, setTitle] = useState('');
+
+  const load = async () => {
+    const res = await fetch('http://localhost:5000/campaigns');
+    setData(await res.json());
+  };
+
+  const add = async () => {
+    await fetch('http://localhost:5000/campaigns', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title })
+    });
+    load();
+  };
+
+  useEffect(() => { load(); }, []);
+
+  return (
+    <div>
+      <h2>Donation Platform</h2>
+
+      <input onChange={(e) => setTitle(e.target.value)} />
+      <button onClick={add}>Add</button>
+
+      {data.map((x, i) => (
+        <p key={i}>{x.title}</p>
+      ))}
+    </div>
+  );
+}
+
+export default App;
